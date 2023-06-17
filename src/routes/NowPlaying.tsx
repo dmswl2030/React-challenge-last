@@ -7,7 +7,7 @@ import {
   makeBgPath,
   IMovieDetail,
 } from "../api";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { HiXCircle } from "react-icons/hi";
 import { formattedNumber } from "../utils";
@@ -26,56 +26,42 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h1`
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 25px;
-`;
-const MovieList = styled.ul`
+const MovieList = styled(motion.ul)`
   width: 700px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  padding: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
   justify-content: center;
   align-items: center;
 `;
-
-const MovieItem = styled.li``;
-const Box = styled(motion.div)<{ bgphoto: string }>`
+const MovieItem = styled(motion.li)`
+  position: relative;
   width: 200px;
   height: 300px;
-  border-radius: 20px;
-  background-color: white;
-  background-image: url(${(props) => props.bgphoto});
-  background-size: cover;
-  background-position: center center;
   font-size: 66px;
   cursor: pointer;
 `;
-const boxVariants = {
-  normal: {
-    scale: 1,
-  },
-  hover: {
-    scale: 1.1,
-    y: -10,
-    transition: {
-      delay: 0.1,
-      type: "tween",
-    },
-  },
-};
-const ItemTitle = styled.h2`
-  width: 200px;
-  height: 20px;
-  margin-top: 15px;
+const MovieImage = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 20px;
+`;
+const MovieTitle = styled.h2`
+  width: 100%;
   display: flex;
-  flex-wrap: nowrap;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   justify-content: center;
   align-items: center;
   font-size: 20px;
   text-align: center;
 `;
+
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -112,15 +98,16 @@ const DetailTitle = styled.h3`
   position: relative;
   top: -80px;
 `;
-
 const DetailOverview = styled.p`
   padding: 20px;
+  font-size: 20px;
   position: relative;
   top: -80px;
   color: ${(props) => props.theme.white.lighter};
 `;
 const DetailInfoWrap = styled.div`
   padding: 20px;
+  font-size: 20px;
   position: relative;
   top: -80px;
 `;
@@ -135,104 +122,109 @@ const BigXButton = styled.div`
   cursor: pointer;
 `;
 
+const movieListVariants = {
+  start: { scale: 0, opacity: 0 },
+  end: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.2,
+    },
+  },
+};
+const movieItemVariants = {
+  start: { scale: 0, opacity: 0 },
+  end: {
+    scale: 1,
+    opacity: 1,
+  },
+};
+
 export default function NowPlaying() {
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  const [movieDetail, setMovieDetail] = useState<IMovieDetail | undefined>();
   const [movieId, setMovieId] = useState<string>("");
   const { data, isLoading } = useQuery<IAPIResponse>(
     ["movies", "nowplaying"],
     getNowPlaying
   );
-  // const { data: movieDetail } = useQuery<IMovieDetail>(["movie", movieId], () =>
-  //   getMovie(movieId)
-  // );
-
-  const onClickMovie = (movieId: string) => {
-    const { data } = useQuery<IMovieDetail>(["movie", movieId], () =>
-      getMovie(movieId)
-    );
-    setMovieDetail(data);
-  };
+  const { data: movieDetail, isLoading: detailLoading } =
+    useQuery<IMovieDetail>(["movie", movieId], () => getMovie(movieId), {
+      enabled: movieId !== "",
+    });
 
   return (
     <Wrapper>
-      <Title>Now Playing Movies</Title>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <MovieList>
+          <MovieList variants={movieListVariants} initial="start" animate="end">
             {data?.results.map((movie) => (
-              <MovieItem key={movie.id}>
-                <AnimatePresence initial={false}>
-                  <Box
-                    layoutId={movie.id + ""}
-                    key={movie.id}
-                    whileHover="hover"
-                    initial="normal"
-                    variants={boxVariants}
-                    onClick={() => {
-                      setIsClicked(!isClicked);
-                      setMovieId(movie.id + "");
-                      onClickMovie(movie.id + "");
-                    }}
-                    transition={{ type: "tween" }}
-                    bgphoto={makeImagePath(movie.backdrop_path)}
-                  ></Box>
-                  <ItemTitle>{movie.title}</ItemTitle>
-                </AnimatePresence>
+              <MovieItem
+                layoutId={movie.id + ""}
+                key={movie.id}
+                variants={movieItemVariants}
+                whileHover={{
+                  y: -10,
+                }}
+                onClick={() => {
+                  setIsClicked(!isClicked);
+                  setMovieId(movie.id + "");
+                }}
+              >
+                <MovieImage src={makeImagePath(movie.poster_path)} />
+                <MovieTitle>{movie.title}</MovieTitle>
               </MovieItem>
             ))}
           </MovieList>
-          <AnimatePresence>
-            {isClicked && movieDetail ? (
-              <>
-                <Overlay
-                  exit={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  onClick={() => {
-                    setIsClicked(!isClicked);
-                  }}
-                />
-                <DetailWrap>
-                  <>
-                    <DetailCover
-                      style={{
-                        backgroundImage: `linear-gradient(to top, black, transparent), url(${makeBgPath(
-                          movieDetail?.backdrop_path!
-                        )})`,
-                      }}
-                    >
-                      <BigXButton>
-                        <HiXCircle
-                          style={{ fontSize: "30px" }}
-                          onClick={() => setIsClicked(!isClicked)}
-                        ></HiXCircle>
-                      </BigXButton>
-                    </DetailCover>
-                    <DetailTitle>{movieDetail?.title}</DetailTitle>
-                    <DetailOverview>{movieDetail?.overview}</DetailOverview>
-                    <DetailInfoWrap>
-                      <DetailInfo>
-                        Budget: ${formattedNumber(Number(movieDetail?.budget))}
-                      </DetailInfo>
-                      <DetailInfo>
-                        Revenue: $
-                        {formattedNumber(Number(movieDetail?.revenue))}
-                      </DetailInfo>
-                      <DetailInfo>
-                        Runtime: {movieDetail?.runtime} minutes
-                      </DetailInfo>
-                      <DetailInfo>
-                        Rating: {movieDetail?.vote_average}
-                      </DetailInfo>
-                      <DetailInfo>Homepage: {movieDetail?.homepage}</DetailInfo>
-                    </DetailInfoWrap>
-                  </>
-                </DetailWrap>
-              </>
-            ) : null}
-          </AnimatePresence>
+          {isClicked ? (
+            <>
+              <Overlay
+                exit={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => {
+                  setIsClicked(!isClicked);
+                }}
+              />
+              <DetailWrap layoutId={movieDetail?.id + ""}>
+                <>
+                  <DetailCover
+                    style={{
+                      backgroundImage: `linear-gradient(to top, black, transparent), url(${makeBgPath(
+                        movieDetail?.backdrop_path!
+                      )})`,
+                    }}
+                  >
+                    <BigXButton>
+                      <HiXCircle
+                        style={{ fontSize: "30px" }}
+                        onClick={() => setIsClicked(!isClicked)}
+                      ></HiXCircle>
+                    </BigXButton>
+                  </DetailCover>
+                  <DetailTitle>{movieDetail?.title}</DetailTitle>
+                  <DetailOverview>{movieDetail?.overview}</DetailOverview>
+                  <DetailInfoWrap>
+                    <DetailInfo>
+                      Budget: {formattedNumber(Number(movieDetail?.budget))}
+                    </DetailInfo>
+                    <DetailInfo>
+                      Revenue:
+                      {formattedNumber(Number(movieDetail?.revenue))}
+                    </DetailInfo>
+                    <DetailInfo>
+                      Runtime: {movieDetail?.runtime} minutes
+                    </DetailInfo>
+                    <DetailInfo>
+                      Rating: {movieDetail?.vote_average.toFixed(1)}
+                    </DetailInfo>
+                    <DetailInfo>Homepage: {movieDetail?.homepage}</DetailInfo>
+                  </DetailInfoWrap>
+                </>
+              </DetailWrap>
+            </>
+          ) : null}
         </>
       )}
     </Wrapper>

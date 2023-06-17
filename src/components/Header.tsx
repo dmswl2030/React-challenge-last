@@ -19,6 +19,7 @@ const Nav = styled(motion.nav)`
   font-size: 14px;
   padding: 20px 60px;
   color: white;
+  z-index: 100;
 `;
 
 const Col = styled.div`
@@ -29,6 +30,7 @@ const Col = styled.div`
 const Items = styled.ul`
   display: flex;
   align-items: center;
+  font-size: 20px;
 `;
 
 const Item = styled.li`
@@ -39,11 +41,13 @@ const Item = styled.li`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  &:hover {
-    color: yellow;
+`;
+const LinkText = styled.div`
+  &:hover,
+  &.active {
+    color: red;
   }
 `;
-
 const Circle = styled(motion.span)`
   position: absolute;
   width: 5px;
@@ -65,8 +69,7 @@ const navVariants = {
 };
 
 function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  //useMatch : 우리가 이 route안에 있는지 알려주는 역할
+  const [isActive, setIsActive] = useState(false);
   const popularMatch = useMatch("/");
   const nowPlayingMatch = useMatch("/now-playing");
   const comingSoonMatch = useMatch("/coming-soon");
@@ -83,17 +86,23 @@ function Header() {
       <Col>
         <Items>
           <Item>
-            <Link to="/">
+            <Link to="/" style={{ color: popularMatch ? "red" : "white" }}>
               Popular {popularMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
           <Item>
-            <Link to="now-playing">
+            <Link
+              to="now-playing"
+              style={{ color: nowPlayingMatch ? "red" : "white" }}
+            >
               Now Playing {nowPlayingMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
           <Item>
-            <Link to="coming-soon">
+            <Link
+              to="coming-soon"
+              style={{ color: comingSoonMatch ? "red" : "white" }}
+            >
               Comming soon {comingSoonMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
