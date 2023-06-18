@@ -12,6 +12,7 @@ import { useState } from "react";
 import { HiXCircle } from "react-icons/hi";
 import { formattedNumber } from "../utils";
 import styled from "styled-components";
+import MovieDetail from "../components/MovieDetail";
 
 const Wrapper = styled.div`
   padding: 50px;
@@ -60,69 +61,6 @@ const MovieTitle = styled.h2`
   align-items: center;
   font-size: 20px;
   text-align: center;
-`;
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-const DetailWrap = styled(motion.div)`
-  position: fixed;
-  width: 80vw;
-  height: 80vh;
-  overflow: auto;
-  top: 80px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 15px;
-  background-color: ${(props) => props.theme.black.lighter};
-
-  /* Hide scrollbar */
-  ::-webkit-scrollbar {
-    width: 0;
-  }
-`;
-const DetailCover = styled.div`
-  position: relative;
-  width: 100%;
-  height: 600px;
-  background-size: cover;
-  background-position: center center;
-`;
-const DetailTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  margin-top: 30px;
-  padding: 20px;
-  font-size: 46px;
-  font-weight: 700;
-  position: relative;
-`;
-const DetailOverview = styled.p`
-  padding: 20px;
-  font-size: 20px;
-  position: relative;
-  color: ${(props) => props.theme.white.lighter};
-`;
-const DetailInfoWrap = styled.div`
-  height: 200px;
-  padding: 20px;
-  font-size: 20px;
-  position: relative;
-`;
-const DetailInfo = styled.p`
-  padding: 5px 0;
-  color: ${(props) => props.theme.white.lighter};
-`;
-const BigXButton = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
 `;
 
 const movieListVariants = {
@@ -183,49 +121,11 @@ export default function NowPlaying() {
           </MovieList>
           {isClicked ? (
             <>
-              <Overlay
-                exit={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                onClick={() => {
-                  setIsClicked(!isClicked);
-                }}
+              <MovieDetail
+                data={movieDetail}
+                setIsClicked={setIsClicked}
+                isClicked={isClicked}
               />
-              <DetailWrap layoutId={movieDetail?.id + ""}>
-                <>
-                  <DetailCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, black, transparent), url(${makeBgPath(
-                        movieDetail?.backdrop_path!
-                      )})`,
-                    }}
-                  >
-                    <BigXButton>
-                      <HiXCircle
-                        style={{ fontSize: "30px" }}
-                        onClick={() => setIsClicked(!isClicked)}
-                      ></HiXCircle>
-                    </BigXButton>
-                  </DetailCover>
-                  <DetailTitle>{movieDetail?.title}</DetailTitle>
-                  <DetailOverview>{movieDetail?.overview}</DetailOverview>
-                  <DetailInfoWrap>
-                    <DetailInfo>
-                      Budget: {formattedNumber(Number(movieDetail?.budget))}
-                    </DetailInfo>
-                    <DetailInfo>
-                      Revenue:
-                      {formattedNumber(Number(movieDetail?.revenue))}
-                    </DetailInfo>
-                    <DetailInfo>
-                      Runtime: {movieDetail?.runtime} minutes
-                    </DetailInfo>
-                    <DetailInfo>
-                      Rating: {movieDetail?.vote_average.toFixed(1)}
-                    </DetailInfo>
-                    <DetailInfo>Homepage: {movieDetail?.homepage}</DetailInfo>
-                  </DetailInfoWrap>
-                </>
-              </DetailWrap>
             </>
           ) : null}
         </>
