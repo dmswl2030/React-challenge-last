@@ -122,6 +122,7 @@ export default function Popular() {
                 data={movieDetail}
                 setIsClicked={setIsClicked}
                 isClicked={isClicked}
+                isLoading={isLoading}
               />
             </>
           ) : null}

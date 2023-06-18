@@ -42,12 +42,6 @@ const Item = styled.li`
   justify-content: center;
   flex-direction: column;
 `;
-const LinkText = styled.div`
-  &:hover,
-  &.active {
-    color: red;
-  }
-`;
 const Circle = styled(motion.span)`
   position: absolute;
   width: 5px;
@@ -68,8 +62,7 @@ const navVariants = {
   },
 };
 
-function Header() {
-  const [isActive, setIsActive] = useState(false);
+export default function Header() {
   const popularMatch = useMatch("/");
   const nowPlayingMatch = useMatch("/now-playing");
   const comingSoonMatch = useMatch("/coming-soon");
@@ -111,5 +104,3 @@ function Header() {
     </Nav>
   );
 }
-
-export default Header;

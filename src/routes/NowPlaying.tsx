@@ -125,6 +125,7 @@ export default function NowPlaying() {
                 data={movieDetail}
                 setIsClicked={setIsClicked}
                 isClicked={isClicked}
+                isLoading={isLoading}
               />
             </>
           ) : null}

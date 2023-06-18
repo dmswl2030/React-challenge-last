@@ -69,51 +69,60 @@ const BigXButton = styled.div`
 
 interface MovieDetailProps {
   data: IMovieDetail | undefined;
-  isClicked: boolean;
   setIsClicked: React.Dispatch<React.SetStateAction<boolean>>; //상태를 업데이트하고 컴포넌트를 다시 렌더링하기 위해서 사용함
+  isClicked: boolean;
+  isLoading: boolean;
 }
 
-const MovieDetail = ({ data, isClicked, setIsClicked }: MovieDetailProps) => {
+export default function MovieDetail({
+  data,
+  setIsClicked,
+  isClicked,
+  isLoading,
+}: MovieDetailProps) {
   return (
     <>
-      <Overlay
-        exit={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        onClick={() => setIsClicked(!isClicked)}
-      />
-      <DetailWrap layoutId={data?.id + ""}>
-        <>
-          <DetailCover
-            style={{
-              backgroundImage: `linear-gradient(to top, black, transparent), url(${makeBgPath(
-                data?.backdrop_path!
-              )})`,
-            }}
-          >
-            <BigXButton>
-              <HiXCircle
-                style={{ fontSize: "30px" }}
-                onClick={() => setIsClicked(!isClicked)}
-              ></HiXCircle>
-            </BigXButton>
-          </DetailCover>
-          <DetailTitle>{data?.title}</DetailTitle>
-          <DetailOverview>{data?.overview}</DetailOverview>
-          <DetailInfoWrap>
-            <DetailInfo>
-              Budget: {formattedNumber(Number(data?.budget))}
-            </DetailInfo>
-            <DetailInfo>
-              Revenue: {formattedNumber(Number(data?.revenue))}
-            </DetailInfo>
-            <DetailInfo>Runtime: {data?.runtime} minutes</DetailInfo>
-            <DetailInfo>Rating: {data?.vote_average.toFixed(1)}</DetailInfo>
-            <DetailInfo>Homepage: {data?.homepage}</DetailInfo>
-          </DetailInfoWrap>
-        </>
-      </DetailWrap>
+      {isClicked &&
+        (isLoading ? (
+          <div>loading...</div>
+        ) : (
+          <>
+            <Overlay
+              exit={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={() => setIsClicked(!isClicked)}
+            />
+            <DetailWrap layoutId={data?.id + ""}>
+              <DetailCover
+                style={{
+                  backgroundImage: `linear-gradient(to top, black, transparent), url(${makeBgPath(
+                    data?.backdrop_path!
+                  )})`,
+                }}
+              >
+                <BigXButton>
+                  <HiXCircle
+                    style={{ fontSize: "30px" }}
+                    onClick={() => setIsClicked(!isClicked)}
+                  ></HiXCircle>
+                </BigXButton>
+              </DetailCover>
+              <DetailTitle>{data?.title}</DetailTitle>
+              <DetailOverview>{data?.overview}</DetailOverview>
+              <DetailInfoWrap>
+                <DetailInfo>
+                  Budget: {formattedNumber(Number(data?.budget))}
+                </DetailInfo>
+                <DetailInfo>
+                  Revenue: {formattedNumber(Number(data?.revenue))}
+                </DetailInfo>
+                <DetailInfo>Runtime: {data?.runtime} minutes</DetailInfo>
+                <DetailInfo>Rating: {data?.vote_average.toFixed(1)}</DetailInfo>
+                <DetailInfo>Homepage: {data?.homepage}</DetailInfo>
+              </DetailInfoWrap>
+            </DetailWrap>
+          </>
+        ))}
     </>
   );
-};
-
-export default MovieDetail;
+}

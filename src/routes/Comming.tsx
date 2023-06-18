@@ -122,6 +122,7 @@ export default function Comming() {
                 data={movieDetail}
                 setIsClicked={setIsClicked}
                 isClicked={isClicked}
+                isLoading={isLoading}
               />
             </>
           ) : null}
