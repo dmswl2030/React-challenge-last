@@ -20,20 +20,7 @@ export const router = createBrowserRouter([
       {
         path: "now-playing",
         element: <NowPlaying />,
-        // children: [
-        //   {
-        //     path: ":id",
-        //     element: <NowPlaying />,
-        //   },
-        // ],
       },
     ],
   },
 ]);
-
-{
-  /* <Route path="/" element={<Popular />}></Route>
-<Route path="/coming-soon" element={<Comming />}></Route>
-<Route path="/now-playing" element={<NowPlaying />}></Route>
-<Route path="/movies/:movieId" element={<Home />} /> */
-}

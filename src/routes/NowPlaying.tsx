@@ -74,20 +74,25 @@ const DetailWrap = styled(motion.div)`
   position: fixed;
   width: 80vw;
   height: 80vh;
+  overflow: auto;
   top: 80px;
   left: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 15px;
-  overflow: hidden;
   background-color: ${(props) => props.theme.black.lighter};
+
+  /* Hide scrollbar */
+  ::-webkit-scrollbar {
+    width: 0;
+  }
 `;
 const DetailCover = styled.div`
   position: relative;
   width: 100%;
+  height: 600px;
   background-size: cover;
   background-position: center center;
-  height: 600px;
 `;
 const DetailTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
@@ -96,20 +101,18 @@ const DetailTitle = styled.h3`
   font-size: 46px;
   font-weight: 700;
   position: relative;
-  top: -80px;
 `;
 const DetailOverview = styled.p`
   padding: 20px;
   font-size: 20px;
   position: relative;
-  top: -80px;
   color: ${(props) => props.theme.white.lighter};
 `;
 const DetailInfoWrap = styled.div`
+  height: 200px;
   padding: 20px;
   font-size: 20px;
   position: relative;
-  top: -80px;
 `;
 const DetailInfo = styled.p`
   padding: 5px 0;
